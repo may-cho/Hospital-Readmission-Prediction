@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Patient Data Readmission Prediction</h2>
+
+<form method="POST" action="{{ url_for('predict') }}">
+    <div class="row">
+        <!-- Column 1 -->
+        <div class="col-md-6">
+            <!-- Model Selection -->
+            <div class="mb-3">
+                <label for="model_choice" class="form-label"><strong>Select Classification Model</strong></label>
+                <select class="form-select border-primary" id="model_choice" name="model_choice" required>
+                    <option value="logistic_regression">Logistic Regression</option>
+                    <option value="random_forest" selected>Random Forest</option>
+                    <option value="xgboost">XGBoost</option>
+                </select>
+            </div>
+
+            <!-- Imbalance Handling Strategy -->
+            <div class="mb-3">
+                <label for="resampling_method" class="form-label"><strong>Imbalance Handling Strategy</strong></label>
+                <select class="form-select border-primary" id="resampling_method" name="resampling_method" required>
+                    <option value="class_weight">Class Weighting</option>
+                    <option value="smote">SMOTE (Over-sampling)</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="gender" class="form-label">Gender</label>
+                <select class="form-select" id="gender" name="gender" required>
+                    <option value="0">Male</option>
+                    <option value="1">Female</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="ethnic_group" class="form-label">Ethnic Group Description</label>
+                <select class="form-select" id="ethnic_group" name="ethnic_group" required>
+                    <option value="0">BRITISH</option>
+                    <option value="1">ANY OTHER WHITE BACKGROUND</option>
+                    <option value="2">ASIAN</option>
+                    <option value="3">MIXED</option>
+                    <option value="4">BLACK</option>
+                    <option value="5">CHINESE</option>
+                    <option value="7">OTHER / UNKNOWN</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="age" class="form-label">Age</label>
+                <input type="number" class="form-control" id="age" name="age" min="0" max="120" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="discharge_alert" class="form-label">Discharge Alert Status</label>
+                <select class="form-select" id="discharge_alert" name="discharge_alert" required>
+                    <option value="0">GREEN</option>
+                    <option value="1">AMBER</option>
+                    <option value="2">RED</option>
+                    <option value="3">BLACK</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="discharge_destination_address" class="form-label">Discharge Destination Address</label>
+                <select class="form-select" id="discharge_destination_address" name="discharge_destination_address" required>
+                    <option value="0">HOME</option>
+                    <option value="1">Care Center</option>
+                </select>
+            </div>
+               
+
+            <div class="mb-3">
+                <label for="admitting_ward" class="form-label">Admitting Ward Description</label>
+                <select class="form-select" id="admitting_ward" name="admitting_ward" required>
+                    <option value="0">Acute Emergency</option>
+                    <option value="1">Surgical Wards</option>
+                    <option value="2">General Inpatient Wards</option>
+                    <option value="3">Day Care Endoscopy</option>
+                    <option value="4">Critical Specialized Care</option>
+                    <option value="5">OTHER WARD</option>
+                </select>
+            </div>
+
+            
+        </div>
+
+        <!-- Column 2 -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="admission_method" class="form-label">Admission Method Description</label>
+                <select class="form-select" id="admission_method" name="admission_method" required>
+                    <option value="0">Elective</option>
+                    <option value="1">EMERGENCY</option>
+                    <option value="2">OTHER</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="discharge_method" class="form-label">Discharge Method Description</label>
+                <select class="form-select" id="discharge_method" name="discharge_method" required>
+                    <option value="0">ON MEDICAL ADVICE</option>
+                    <option value="1">PATIENT DISCHARGED HIMSELF</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="patient_type" class="form-label">Type of Patient Description</label>
+                <select class="form-select" id="patient_type" name="patient_type" required>
+                    <option value="0">DAY CASE</option>
+                    <option value="1">INPATIENT (ELECTIVE ADMISSION)</option>
+                    <option value="2">EMERGENCY</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="length_of_stay" class="form-label">Length of Stay (Days)</label>
+                <select class="form-select" id="length_of_stay" name="length_of_stay" required>
+                    <option value="0">Same Day(0 days)</option>
+                    <option value="1">Short Stay(1-7 days)</option>
+                    <option value="2">Medium Stay(7-30 days)</option>
+                    <option value="3">Long Stay(>30 days)</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="primary_diagnosis_code" class="form-label">Primary Diagnosis Code</label>
+                <select class="form-select" id="primary_diagnosis_code" name="primary_diagnosis_code" required>
+                    <option value="" selected disabled>-- Select Diagnosis Code --</option>
+                    <option value="0">J - Diseases of the Respiratory System (e.g., J90X Pleural effusion)</option>
+                    <option value="1">I - Diseases of the Circulatory System (e.g., I7021 Atherosclerosis)</option>
+                    <option value="2">D - Diseases of the Blood & Neoplasms (e.g., D509 Iron deficiency anaemia)</option>
+                    <option value="3">H - Diseases of the Eye, Adnexa, Ear & Mastoid (e.g., H409 Glaucoma)</option>
+                    <option value="4">N - Diseases of the Genitourinary System (e.g., N179 Acute renal failure)</option>
+                    <option value="5">K - Diseases of the Digestive System</option>
+                    <option value="6">A - Certain Infectious & Parasitic Diseases</option>
+                    <option value="7">S - Injury, Poisoning & External Causes (S00-T88)</option>
+                    <option value="8">G - Diseases of the Nervous System</option>
+                    <option value="9">R - Symptoms, Signs & Abnormal Clinical/Lab Findings</option>
+                    <option value="10">F - Mental, Behavioral & Neurodevelopmental Disorders</option>
+                    <option value="11">L - Diseases of the Skin & Subcutaneous Tissue</option>
+                    <option value="12">M - Diseases of the Musculoskeletal System & Connective Tissue</option>
+                    <option value="13">C - Malignant Neoplasms (Cancer)</option>
+                    <option value="14">T - Injury, Poisoning & Consequences of External Causes</option>
+                    <option value="15">Z - Factors Influencing Health Status & Contact with Health Services</option>
+                    <option value="16">E - Endocrine, Nutritional & Metabolic Diseases</option>
+                    <option value="17">B - Other Infectious & Parasitic Diseases</option>
+                    <option value="18">Q - Congenital Malformations, Deformations & Chromosomal Abnormalities</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="main_specialty" class="form-label">Main Specialty Description</label>
+                <select class="form-select" id="main_specialty" name="main_specialty" required>
+                    <option value="0">GENERAL MEDICINE</option>
+                    <option value="1">GERIATRIC MEDICINE</option>
+                    <option value="2">CARDIOLOGY</option>
+                    <option value="3">GENERAL SURGERY</option>
+                    <option value="4">OPHTHALMOLOGY</option>
+                    <option value="5">TRAUMA & ORTHOPAEDICS</option>
+                    <option value="6">ACCIDENT & EMERGENCY</option>
+                    <option value="7">CARDIOTHORACIC SURGERY</option>
+                    <option value="8">GASTROENTEROLOGY</option>
+                    <option value="9">UROLOGY</option>
+                    <option value="10">NEUROLOGY</option>
+                    <option value="11">RESPIRATORY MEDICINE</option>
+                    <option value="12">NEUROSURGERY</option>
+                    <option value="13">ENT</option>
+                    <option value="14">GYNAECOLOGY</option>
+                    <option value="15">ANAESTHETICS</option>
+                    <option value="16">ORAL SURGERY</option>
+                    <option value="17">OBSTETRICS</option>
+                    <option value="18">NEPHROLOGY</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="medications" class="form-label">Medications Count</label>
+                <input type="number" step="any" class="form-control" id="medications" name="medications" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="comorbidities" class="form-label">Comorbidities Count</label>
+                <input type="number" class="form-control" id="comorbidities" name="comorbidities" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="lives_alone" class="form-label">Lives Alone</label>
+                <select class="form-select" id="lives_alone" name="lives_alone" required>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="scc" class="form-label">SCC</label>
+                <select class="form-select" id="scc" name="scc" required>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="follow_up" class="form-label">Follow-up</label>
+                <select class="form-select" id="follow_up" name="follow_up" required>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg mt-3 w-100">Predict Readmission</button>
+</form>
+{% endblock %}

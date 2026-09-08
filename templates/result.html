@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Prediction Result</h2>
+    
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">Readmission Risk Assessment</h5>
+        </div>
+        <div class="card-body">
+            <!-- Model & Methodology Used -->
+            <div class="mb-3">
+                <small class="text-muted d-block">
+                    <strong>Model:</strong> {{ result.model_used }}
+                </small>
+                <small class="text-muted d-block">
+                    <strong>Methodology:</strong> {{ result.methodology_used }}
+                </small>
+            </div>
+
+            <hr>
+
+            <!-- Risk Status Badge -->
+            <p class="card-text">
+                <strong>Risk Level:</strong>
+                <span class="badge {{ result.badge_class }}">{{ result.risk_status }}</span>
+            </p>
+            <p class="card-text">
+                <strong>Probability of Readmission:</strong> {{ result.readmission_probability }}%
+            </p>
+            <p class="card-text text-muted">
+                <strong>Probability of NO Readmission:</strong> {{ result.no_readmission_probability }}%
+            </p>    
+
+            <!-- Probability Output -->
+            <p class="card-text fs-5">
+                <strong>Probability of Readmission:</strong> 
+                <span class="fw-bold {% if result.prediction == 1 %}text-danger{% else %}text-success{% endif %}">
+                    {{ result.readmission_probability }}%
+                </span>
+            </p>
+
+            <!-- Progress Bar Visualization -->
+            {% if result.readmission_probability != "N/A" %}
+            <div class="progress mb-4" style="height: 25px;">
+                <div class="progress-bar {% if result.prediction == 1 %}bg-danger{% else %}bg-success{% endif %}" 
+                     role="progressbar" 
+                     style="width: {{ result.readmission_probability }}%"; 
+                     aria-valuenow="{{ result.readmission_probability }}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                     {{ result.readmission_probability }}%
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('predict') }}" class="btn btn-primary">Make Another Prediction</a>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

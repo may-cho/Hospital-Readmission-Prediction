@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded-3">
+    <h1 class="display-4">Welcome to the Hospital Readmission Predictor</h1>
+    <p class="lead">
+        This tool uses machine learning to predict whether a patient will be readmitted within 30 days of discharge.
+    </p>
+    <hr class="my-4">
+    <p>
+        Enter patient data on the <strong>Predict</strong> page to get an instant prediction.
+        Learn more about the project on the <strong>About</strong> page.
+    </p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('predict') }}" role="button">Start Prediction</a>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <h3>Why Predict Readmission?</h3>
+        <p>Reducing hospital readmissions improves patient outcomes and lowers healthcare costs. Early identification of at-risk patients allows for better discharge planning and follow-up care.</p>
+    </div>
+    <div class="col-md-4">
+        <h3>Data-Driven</h3>
+        <p>Our model is trained on historical patient data, including demographics, lab results, and procedure counts, to provide accurate predictions.</p>
+    </div>
+    <div class="col-md-4">
+        <h3>How It Works</h3>
+        <p>Fill in the form on the Predict page, and our algorithm will output a risk score and probability of readmission.</p>
+    </div>
+</div>
+{% endblock %}

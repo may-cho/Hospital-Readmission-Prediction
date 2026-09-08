@@ -1,0 +1,15 @@
+body {
+    padding-bottom: 60px;
+}
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+.jumbotron {
+    background-color: #f8f9fa;
+    padding: 2rem 1rem;
+}
+.card {
+    margin-bottom: 1rem;
+}

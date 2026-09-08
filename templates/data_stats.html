@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="mb-3 text-primary font-weight-bold">Data Exploratory & Statistical Analysis</h1>
+    <p class="lead text-muted">Comprehensive breakdown of clinical features, distribution metrics, missing values, and correlation insights for readmission modeling.</p>
+    <hr class="mb-4">
+
+    <!-- Section 0: Raw Dataset Overview (Full Width) -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/rawdata.png') }}" class="card-img-top p-3 img-fluid" alt="Raw Dataset Preview">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">Raw Clinical Dataset Overview</h5>
+                    <p class="card-text text-secondary">
+                        Initial tabular preview of patient records displaying demographic features, admission and discharge timestamps, diagnosis descriptions, clinical specialty categorization, medication counts, and readmission indicators before preprocessing.
+                    </p>
+                    <hr class="my-3">
+                    <h6 class="font-weight-bold text-dark mb-3">Dataset Metadata & Feature Definitions</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled text-secondary small">
+                                <li class="mb-2"><strong>HICSS_ID:</strong> Unique anonymous patient encounter identifier</li>
+                                <li class="mb-2"><strong>Gender / Age:</strong> Patient demographic information (M/F) and age at admission</li>
+                                <li class="mb-2"><strong>Ethnic Group Description:</strong> Self-reported patient ethnicity</li>
+                                <li class="mb-2"><strong>POSTCODE.1:</strong> Outward postal area code for geographic clustering</li>
+                                <li class="mb-2"><strong>Readmission:</strong> Target binary indicator (True = Readmitted within 30 days)</li>
+                                <li class="mb-2"><strong>Admission / Discharge Date:</strong> Timestamps recorded for the hospital episode</li>
+                                <li class="mb-2"><strong>Discharge_day / Alert Status:</strong> Day of week and alert severity color coding</li>
+                                <li class="mb-2"><strong>Admitting Ward / Admission Method:</strong> Clinical department and entry route (e.g., Emergency GP, A&E)</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled text-secondary small">
+                                <li class="mb-2"><strong>Admission Source / Discharge Method:</strong> Pre-admission origin and clinical disposition</li>
+                                <li class="mb-2"><strong>Discharge Destination Desc:</strong> Post-discharge residence (e.g., Usual Place of Residence)</li>
+                                <li class="mb-2"><strong>Type of Patient / Length of Stay (Days):</strong> Inpatient status type and total duration of stay</li>
+                                <li class="mb-2"><strong>Primary Diagnosis Code / Description:</strong> Primary ICD-10 clinical diagnostic coding</li>
+                                <li class="mb-2"><strong>Main Specialty Description:</strong> Attending clinical medical specialty</li>
+                                <li class="mb-2"><strong>Medications:</strong> Total number of distinct active medications prescribed</li>
+                                <li class="mb-2"><strong>Lives alon / SCC / Follow-up:</strong> Social indicators (Lives alone, Social Care, Follow-up scheduled)</li>
+                                <li class="mb-2"><strong>Comorbidities:</strong> Quantified sum of co-existing medical conditions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 1: Overview & Imbalance -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/readmission_distribution.png') }}" class="card-img-top p-3 img-fluid" alt="Readmission Distribution">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">1. Target Class Imbalance</h5>
+                    <p class="card-text text-secondary">
+                        The dataset contains <strong>2,549 Non-Readmitted cases (94.1%)</strong> and <strong>159 Readmitted cases (5.9%)</strong>. 
+                        This extreme 16:1 class imbalance required oversampling via SMOTE during model training to avoid positive class bias.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/full_correlation_matrix_heatmap.png') }}" class="card-img-top p-3 img-fluid" alt="Correlation Matrix Heatmap">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">2. Correlation Matrix Heatmap</h5>
+                    <p class="card-text text-secondary">
+                        Highlights pairwise Pearson correlations. Key predictors like <code>Length_of_Stay_Encoded</code> (0.58), <code>Patient Type Encoded</code> (0.90 with Admission Method), and <code>Comorbidities</code> show strong internal colinearity, driving overall model weight distribution.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Clinical Diagnostics & Specialties -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/mapped_main_diagnosis_group_distribution.png') }}" class="card-img-top p-3 img-fluid" alt="Main Diagnosis Group Distribution">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">3. Main Diagnosis Groups (Post-Mapping)</h5>
+                    <p class="card-text text-secondary">
+                        Mapped ICD-10 groupings show primary patient volume concentrated in Categories <strong>I (514 cases)</strong>, <strong>K (433 cases)</strong>, and <strong>J (280 cases)</strong>, corresponding to Circulatory, Digestive, and Respiratory diseases respectively.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/main_diagnosis_group_by_gender.png') }}" class="card-img-top p-3 img-fluid" alt="Diagnosis Group by Gender">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">4. Diagnosis Groups by Gender</h5>
+                    <p class="card-text text-secondary">
+                        Compares patient volume across primary ICD groups by gender. Male patients (M) show higher prevalence in Group I (313 vs 201) and Group K (221 vs 212), whereas females (F) exceed males in Group S and Group H.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Specialties & Dataset Health -->
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/main_speciality_by_gender.png') }}" class="card-img-top p-3 img-fluid" alt="Specialty by Gender">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">5. Specialty Distribution by Gender</h5>
+                    <p class="card-text text-secondary">
+                        <strong>General Medicine</strong> leads all clinical departments (287 Males, 297 Females), followed by <strong>Cardiology</strong> (179 M, 118 F) and <strong>Geriatric Medicine</strong> (132 M, 173 F).
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Data Quality Metrics -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/outliers.png') }}" class="card-img-top p-3 img-fluid" alt="IQR Outlier Summary">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">7. Outlier Analysis (IQR Method)</h5>
+                    <p class="card-text text-secondary">
+                        Calculated IQR upper/lower bounds. Identified 301 outliers in <code>Length of Stay</code> (>17.5 days) and 239 in <code>Medications</code> (>12.5), which were scaled via <code>StandardScaler</code>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/discharge_destination_address.png') }}" class="card-img-top p-3 img-fluid" alt="Discharge Mapping Verification">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">8. Discharge Destination Encoding</h5>
+                    <p class="card-text text-secondary">
+                        Verified categorical encoding where <code>USUAL PLACE OF RESIDENCE</code> maps to <code>0</code>, and non-standard discharge destinations map to <code>1</code>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/missing_value.png') }}" class="card-img-top p-3 img-fluid" alt="Missing Value Analysis">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">6. Missing Value Analysis</h5>
+                    <p class="card-text text-secondary">
+                        Identified missingness in <code>Medications</code> (1,184), <code>SCC</code> (653), <code>Follow-up</code> (653), and <code>Lives alon</code> (526), requiring imputation prior to model training.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
