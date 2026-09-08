@@ -173,4 +173,4 @@ def data_stats():
   return render_template('data_stats.html')
 
 if __name__ == '__main__':
-  app.run(debug=True)
+  app.run()
