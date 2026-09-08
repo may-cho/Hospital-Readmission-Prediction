@@ -123,6 +123,17 @@
     <div class="row">
         <div class="col-lg-6 mb-4">
             <div class="card h-100 shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/missing_value.png') }}" class="card-img-top p-3 img-fluid" alt="Missing Value Analysis">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">6. Missing Value Analysis</h5>
+                    <p class="card-text text-secondary">
+                        Identified missingness in <code>Medications</code> (1,184), <code>SCC</code> (653), <code>Follow-up</code> (653), and <code>Lives alon</code> (526), requiring imputation prior to model training.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
                 <img src="{{ url_for('static', filename='images/outliers.png') }}" class="card-img-top p-3 img-fluid" alt="IQR Outlier Summary">
                 <div class="card-body">
                     <h5 class="card-title font-weight-bold">7. Outlier Analysis (IQR Method)</h5>
@@ -144,14 +155,29 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-md-4 mb-4">
+    <!-- Section 5: Association Rules & Model ROC Performance -->
+    <div class="row">
+        <div class="col-lg-6 mb-4">
             <div class="card h-100 shadow-sm border-0">
-                <img src="{{ url_for('static', filename='images/missing_value.png') }}" class="card-img-top p-3 img-fluid" alt="Missing Value Analysis">
+                <img src="{{ url_for('static', filename='images/top 10 association rule.png') }}" class="card-img-top p-3 img-fluid" alt="Top 10 Association Rules">
                 <div class="card-body">
-                    <h5 class="card-title font-weight-bold">6. Missing Value Analysis</h5>
+                    <h5 class="card-title font-weight-bold">9. Association Rule Mining (Apriori)</h5>
                     <p class="card-text text-secondary">
-                        Identified missingness in <code>Medications</code> (1,184), <code>SCC</code> (653), <code>Follow-up</code> (653), and <code>Lives alon</code> (526), requiring imputation prior to model training.
+                        Displays the strongest clinical association rules linked to patient readmission. Combinations involving <code>Admitting Ward Category Encoded_0</code> alongside <code>Follow-up_1</code> or <code>Lives alon_1</code> achieve the highest Lift metrics (<strong>~2.21 - 2.22</strong>) with <strong>13.0% - 13.1% confidence</strong>, identifying high-risk clinical profiles.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="{{ url_for('static', filename='images/ROC Curve.png') }}" class="card-img-top p-3 img-fluid" alt="ROC AUC Comparison">
+                <div class="card-body">
+                    <h5 class="card-title font-weight-bold">10. Model Evaluation & ROC-AUC Curves</h5>
+                    <p class="card-text text-secondary">
+                        Compares SMOTE oversampling against Class-Weighted baselines for Logistic Regression, Random Forest, and XGBoost. SMOTE-trained Logistic Regression leads performance with an <strong>AUC of 0.7766</strong>, followed by Random Forest (<strong>AUC = 0.7447</strong>) and XGBoost (<strong>AUC = 0.7157</strong>).
                     </p>
                 </div>
             </div>
